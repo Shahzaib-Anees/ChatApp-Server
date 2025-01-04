@@ -126,4 +126,4 @@ const refreshAccessToken = async (req, res) => {
   });
 };
 
-export { registerUser, logInUser, findUserAccount, refreshAccessToken };
+export { getUsers ,registerUser, logInUser, findUserAccount, refreshAccessToken };

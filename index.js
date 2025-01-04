@@ -3,8 +3,10 @@ import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
 import { connectDB } from "./src/db/index.js";
+import userRoutes from "./src/routes/user.routes.js";
 dotenv.config();
 const app = express();
+app.use(express.json());
 const server = http.createServer(app);
 const port = process.env.PORT || 3000;
 
@@ -14,6 +16,8 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+app.use("/api/user", userRoutes);
 
 (async () => {
   try {
