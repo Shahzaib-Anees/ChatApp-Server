@@ -1,6 +1,7 @@
 import express from "express";
 import {
   findUserAccount,
+  getUsers,
   logInUser,
   refreshAccessToken,
   registerUser,
