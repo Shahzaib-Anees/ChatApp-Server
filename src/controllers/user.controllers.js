@@ -2,6 +2,13 @@ import { createAccessToken, createRefreshToken } from "../methods/Methods.js";
 import { schemaForUser } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+// get Users
+const getUsers = async (req, res) => {
+  const users = await schemaForUser.find();
+  return res.status(200).json({
+    data: users,
+  });
+};
 // Register User
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
