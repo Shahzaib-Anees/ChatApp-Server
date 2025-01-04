@@ -45,4 +45,14 @@ const uploadImage = async (file) => {
   }
 };
 
-export { createAccessToken, createRefreshToken, uploadImage };
+const generateCode = () => {
+  let code = [];
+  for (let i = 0; i < 4; i++) {
+    const randomNumber = Math.floor(Math.random() * 10);
+    code.push(randomNumber);
+  }
+
+  return code.join("");
+};
+
+export { createAccessToken, createRefreshToken, uploadImage, generateCode };
