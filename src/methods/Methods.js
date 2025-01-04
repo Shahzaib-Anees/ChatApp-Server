@@ -5,7 +5,7 @@ dotenv.config();
 const createAccessToken = (user) => {
   const token = jwt.sign(
     { email: user?.email },
-    process.env.JWT_ACCESS_TOKEN_SECRET,
+    process.env.JWT_ACCESSS_TOKEN_SECRET,
     {
       expiresIn: "1d",
     }

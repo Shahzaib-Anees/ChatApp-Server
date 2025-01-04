@@ -11,16 +11,32 @@ const getUsers = async (req, res) => {
 };
 // Register User
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name)
+  const { username, email, password } = req.body;
+  if (!username) {
     return res.status(400).json({
       message: "Name is required",
     });
+  } else {
+    const existingUser = await schemaForUser.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({
+        message: "User name already taken",
+      });
+    }
+  }
 
-  if (!email)
+  if (!email) {
     return res.status(400).json({
       message: "Email is required",
     });
+  } else {
+    const existingUser = await schemaForUser.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        message: "Email already taken",
+      });
+    }
+  }
 
   if (!password)
     return res.status(400).json({
@@ -28,7 +44,7 @@ const registerUser = async (req, res) => {
     });
 
   const newUser = await schemaForUser.create({
-    name,
+    username,
     email,
     password,
   });
@@ -37,6 +53,7 @@ const registerUser = async (req, res) => {
   const refreshToken = createRefreshToken(newUser);
 
   return res.status(201).json({
+    message: "User created successfully",
     data: newUser,
     accessToken,
     refreshToken,
@@ -71,7 +88,8 @@ const logInUser = async (req, res) => {
   const refreshToken = createRefreshToken(user);
 
   return res.status(200).json({
-    message: "Login successful",
+    message: "Login successfully",
+    data: user,
     accessToken,
     refreshToken,
   });
@@ -126,4 +144,10 @@ const refreshAccessToken = async (req, res) => {
   });
 };
 
-export { getUsers ,registerUser, logInUser, findUserAccount, refreshAccessToken };
+export {
+  getUsers,
+  registerUser,
+  logInUser,
+  findUserAccount,
+  refreshAccessToken,
+};
