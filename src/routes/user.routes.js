@@ -5,6 +5,7 @@ import {
   logInUser,
   refreshAccessToken,
   registerUser,
+  resetPassword,
   sentVerificationCode,
   verifyCode,
 } from "../controllers/user.controllers.js";
@@ -18,5 +19,6 @@ router.post("/refresh-token", refreshAccessToken);
 router.post("/find", findUserAccount);
 router.post("/sentCode", sentVerificationCode);
 router.post("/verifyCode", verifyCode);
+router.post("/resetPassword", resetPassword);
 
 export default router;

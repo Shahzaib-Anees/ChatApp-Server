@@ -266,6 +266,34 @@ const verifyCode = async (req, res) => {
   }
 };
 
+// reset password
+const resetPassword = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email) return res.status(400).json({ message: "Email is required" });
+  if (!password)
+    return res.status(400).json({ message: "Password is required" });
+
+  const existingUser = await schemaForUser.findOne({ email: email });
+  if (!existingUser) return res.status(404).json({ message: "User not found" });
+  const isPrevPassword = await bcrypt.compare(password, user.password);
+  if (isPrevPassword)
+    return res.status(400).json({
+      message: "New Password cannot be the same as the previous password",
+    });
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const updatedData = await schemaForUser.findByIdandUpdate(
+    existingUser._id,
+    { password: hashedPassword },
+    { new: true }
+  );
+
+  return res.status(200).json({
+    message: "Password updated successfully",
+    data: updatedData,
+  });
+};
+
 export {
   getUsers,
   registerUser,
@@ -274,4 +302,5 @@ export {
   refreshAccessToken,
   sentVerificationCode,
   verifyCode,
+  resetPassword,
 };
