@@ -156,15 +156,10 @@ const refreshAccessToken = async (req, res) => {
 
 // forgot Password
 const sentVerificationCode = async (req, res) => {
-  const { email, type } = req.body;
+  const { email } = req.body;
   if (!email)
     return res.status(400).json({
       message: "Email is required",
-    });
-
-  if (!type)
-    return res.status(400).json({
-      message: "Type is required",
     });
 
   const user = await schemaForUser.findOne({ email: email });
