@@ -184,14 +184,6 @@ const sentVerificationCode = async (req, res) => {
   }
 
   const code = generateCode();
-  const codeInDb = await schemaForVerify.create({
-    userId: user._id,
-    verificationCode: code,
-  });
-
-  setTimeout(async () => {
-    await schemaForVerify.findOneAndDelete({ _id: codeInDb._id });
-  }, 60000);
 
   // Email Design for Email Verification
   const info = await transporter.sendMail({
@@ -219,6 +211,24 @@ const sentVerificationCode = async (req, res) => {
       </div>`
     }`,
   });
+
+  const codeInDb = await schemaForVerify.create({
+    userId: user._id,
+    verificationCode: code,
+  });
+
+  setTimeout(async () => {
+    try {
+      const deletedCode = await schemaForVerify.findOneAndDelete({
+        _id: codeInDb._id,
+      });
+      if (deletedCode) {
+        console.log(`Verification code ${deletedCode._id} expired and deleted`);
+      }
+    } catch (error) {
+      console.error("Error deleting expired verification code:", error);
+    }
+  }, 60000);
 
   res.status(200).json({
     message: "Email sent",
