@@ -156,10 +156,15 @@ const refreshAccessToken = async (req, res) => {
 
 // forgot Password
 const sentVerificationCode = async (req, res) => {
-  const { email } = req.body;
+  const { email, type } = req.body;
   if (!email)
     return res.status(400).json({
       message: "Email is required",
+    });
+
+  if (!type)
+    return res.status(400).json({
+      message: "Type is required",
     });
 
   const user = await schemaForUser.findOne({ email: email });
@@ -209,7 +214,7 @@ const sentVerificationCode = async (req, res) => {
         <p>Dear ${user.username},</p>
         <p>Your verification code for accessing <strong>ChatBox</strong> is:</p>
         <p><strong style="font-size: 20px;">${code}</strong></p>
-        <p>This code is valid for 5 minutes. If you didn’t request this, please ignore this email.</p>
+        <p>This code is valid for <strong>1 minute</strong>. If you didn’t request this, please ignore this email.</p>
         <p>Best regards,<br>The Your Chat App Team</p>
       </div>`
     }`,
