@@ -275,15 +275,15 @@ const resetPassword = async (req, res) => {
 
   const existingUser = await schemaForUser.findOne({ email: email });
   if (!existingUser) return res.status(404).json({ message: "User not found" });
-  const isPrevPassword = await bcrypt.compare(password, user.password);
+  const isPrevPassword = await bcrypt.compare(password, existingUser.password);
   if (isPrevPassword)
     return res.status(400).json({
       message: "New Password cannot be the same as the previous password",
     });
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const updatedData = await schemaForUser.findByIdandUpdate(
-    existingUser._id,
+  const updatedData = await schemaForUser.findOneAndUpdate(
+    { _id: existingUser._id },
     { password: hashedPassword },
     { new: true }
   );
