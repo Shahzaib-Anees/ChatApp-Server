@@ -18,9 +18,11 @@ const io = new Server(server, {
 });
 
 app.use("/api/user", userRoutes);
-app.get("/", (req, res) => {
-  res.send("Hello ChatBox")
-})(async () => {
+app.get("/", async (req, res) => {
+  res.send("Hello ChatBox");
+});
+
+(async () => {
   try {
     const res = await connectDB();
     console.log(res);
