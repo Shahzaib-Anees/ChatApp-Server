@@ -260,7 +260,7 @@ const verifyCode = async (req, res) => {
       { _id: user._id },
       { isVerified: true }
     );
-    return res.status(200).json({ message: "Yur Account has been verified" });
+    return res.status(200).json({ message: "Your Account has been verified" });
   } else {
     return res.status(200).json({ message: "Code verified" });
   }
