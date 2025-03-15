@@ -135,7 +135,7 @@ const logInUser = async (req, res) => {
 };
 
 // find Account by email
-const findUserAccount = async (res, req) => {
+const findUserAccount = async (req, res) => {
   const { email } = req.body;
   if (!email)
     return res.status(400).json({
@@ -150,7 +150,7 @@ const findUserAccount = async (res, req) => {
 
   const verificationCode = generateCode();
   const emailContent = emailTemplates.accountRecoveryEmail(
-    newUser.username,
+    user.username,
     verificationCode
   );
 
