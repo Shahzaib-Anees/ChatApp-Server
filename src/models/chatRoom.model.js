@@ -22,6 +22,11 @@ const chatModel = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    chatType: {
+      type: String,
+      enum: ["single", "group"],
+      default: "single",
+    },
   },
   {
     timestamps: true,

@@ -4,12 +4,14 @@ import {
   createAccessToken,
   createRefreshToken,
   generateCode,
+  sentEmail,
 } from "../methods/Methods.js";
 import { schemaForUser } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { transporter } from "../configs/nodemailer.config.js";
 import { schemaForVerify } from "../models/verify.model.js";
+import { emailTemplates } from "../configs/email.template.js";
 
 // get Users
 const getUsers = async (req, res) => {
@@ -59,14 +61,28 @@ const registerUser = async (req, res) => {
     password,
   });
 
-  const accessToken = createAccessToken(newUser);
-  const refreshToken = createRefreshToken(newUser);
+  const verificationCode = generateCode();
+  const emailContent = emailTemplates.registerVerificationEmail(
+    newUser.username,
+    verificationCode
+  );
+  const existinfVerificationCode = await schemaForVerify.findOne({
+    userId: newUser._id,
+  });
+  if (existinfVerificationCode) {
+    return res.status(400).json({
+      message: "Verification code already sent",
+    });
+  }
+  await sentEmail(newUser.email, "Verify Your Email for ChatBox", emailContent);
+  await schemaForVerify.create({
+    userId: newUser._id,
+    verificationCode,
+  });
 
   return res.status(201).json({
-    message: "User created successfully",
-    data: newUser,
-    accessToken,
-    refreshToken,
+    message: "Please check your email for verification",
+    user: newUser,
   });
 };
 
@@ -94,14 +110,27 @@ const logInUser = async (req, res) => {
       message: "Incorrect password",
     });
 
-  const accessToken = createAccessToken(user);
-  const refreshToken = createRefreshToken(user);
-
+  const code = generateCode();
+  const emailContent = emailTemplates.loginVerificationEmail(
+    user.username,
+    code
+  );
+  const existinfVerificationCode = await schemaForVerify.findOne({
+    userId: user._id,
+  });
+  if (existinfVerificationCode) {
+    return res.status(400).json({
+      message: "Verification code already sent",
+    });
+  }
+  await sentEmail(user.email, "Verify login attempt for ChatBox", emailContent);
+  await schemaForVerify.create({
+    userId: user._id,
+    verificationCode: code,
+  });
   return res.status(200).json({
-    message: "Login successfully",
+    message: "Please verify yourself to complete login",
     data: user,
-    accessToken,
-    refreshToken,
   });
 };
 
@@ -119,8 +148,28 @@ const findUserAccount = async (res, req) => {
       message: "No account found with this email",
     });
 
+  const verificationCode = generateCode();
+  const emailContent = emailTemplates.accountRecoveryEmail(
+    newUser.username,
+    verificationCode
+  );
+
+  const existinfVerificationCode = await schemaForVerify.findOne({
+    userId: user._id,
+  });
+  if (existinfVerificationCode) {
+    return res.status(400).json({
+      message: "Verification code already sent",
+    });
+  }
+
+  await sentEmail(user.email, "Verify Your Email for ChatBox", emailContent);
+  await schemaForVerify.create({
+    userId: user._id,
+    verificationCode,
+  });
   return res.status(200).json({
-    message: "Account found with this email",
+    message: "Verify to recover your account",
     data: user,
   });
 };
@@ -154,88 +203,6 @@ const refreshAccessToken = async (req, res) => {
   });
 };
 
-// forgot Password
-const sentVerificationCode = async (req, res) => {
-  const { email, type } = req.body;
-  if (!email)
-    return res.status(400).json({
-      message: "Email is required",
-    });
-
-  if (!type)
-    return res.status(400).json({
-      message: "Type is required",
-    });
-
-  const user = await schemaForUser.findOne({ email: email });
-  if (!user)
-    return res.status(404).json({
-      message: "No account found with this email",
-    });
-
-  const existingVerificationCode = await schemaForVerify.findOne({
-    userId: user._id,
-  });
-
-  if (existingVerificationCode) {
-    return res.status(400).json({
-      message: "Verification code already sent",
-    });
-  }
-
-  const code = generateCode();
-
-  // Email Design for Email Verification
-  const info = await transporter.sendMail({
-    from: `"ChatBox Team 👻" <${process.env.MY_EMAIL_ADDRESS}>`,
-    to: `${email}`,
-    subject: "Verify Your Email for ChatBox",
-    html: `${
-      type === "email_verification"
-        ? `
-     <h3>Dear ${user.username},</h3>
-      <p>Thank you for registering with <strong>ChatBox</strong>! To complete your registration and activate your account, please enter the verification code provided below:</p>
-      <p><strong>Verification Code: ${code}</strong></p>
-      <p>This code will expire in <strong>1 minute</strong>. If you did not request this verification, please disregard this email.</p>
-      <p>If you need further assistance, feel free to reach out to us at mohammadshahzaib046@gmail.com.</p>
-      <br>
-      <p>Welcome to the community,</p>
-      <p>The <strong>ChatBox</strong> Team</p>`
-        : ` <div style="font-family: Arial, sans-serif; color: #333;">
-        <h2>Your Verification Code</h2>
-        <p>Dear ${user.username},</p>
-        <p>Your verification code for accessing <strong>ChatBox</strong> is:</p>
-        <p><strong style="font-size: 20px;">${code}</strong></p>
-        <p>This code is valid for <strong>1 minute</strong>. If you didn’t request this, please ignore this email.</p>
-        <p>Best regards,<br>The Your Chat App Team</p>
-      </div>`
-    }`,
-  });
-
-  const codeInDb = await schemaForVerify.create({
-    userId: user._id,
-    verificationCode: code,
-  });
-
-  setTimeout(async () => {
-    try {
-      const deletedCode = await schemaForVerify.findOneAndDelete({
-        _id: codeInDb._id,
-      });
-      if (deletedCode) {
-        console.log(`Verification code ${deletedCode._id} expired and deleted`);
-      }
-    } catch (error) {
-      console.error("Error deleting expired verification code:", error);
-    }
-  }, 60000);
-
-  res.status(200).json({
-    message: "Email sent",
-    code: codeInDb,
-  });
-};
-
 // Verify Code
 const verifyCode = async (req, res) => {
   const { email, code, type } = req.body;
@@ -255,20 +222,29 @@ const verifyCode = async (req, res) => {
     return res.status(400).json({ message: "Invalid code" });
 
   await schemaForVerify.findOneAndDelete({ _id: verificationCode._id });
+  const accessToken = createAccessToken(user);
+  const refreshToken = createRefreshToken(user);
   if (type === "email_verification") {
     await schemaForUser.findOneAndUpdate(
       { _id: user._id },
       { isVerified: true }
     );
-    return res.status(200).json({ message: "Your Account has been verified" });
+    return res.status(200).json({
+      message: "Your Account has been verified",
+      accessToken,
+      refreshToken,
+    });
   } else {
-    return res.status(200).json({ message: "Code verified" });
+    return res
+      .status(200)
+      .json({ message: "Code verified", accessToken, refreshToken });
   }
 };
 
 // reset password
 const resetPassword = async (req, res) => {
-  const { email, password } = req.body;
+  const email = req.user?.email;
+  const { password } = req.body;
   if (!email) return res.status(400).json({ message: "Email is required" });
   if (!password)
     return res.status(400).json({ message: "Password is required" });
@@ -300,7 +276,6 @@ export {
   logInUser,
   findUserAccount,
   refreshAccessToken,
-  sentVerificationCode,
   verifyCode,
   resetPassword,
 };

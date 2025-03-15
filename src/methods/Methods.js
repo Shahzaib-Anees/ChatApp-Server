@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
+import { transporter } from "../configs/nodemailer.config.js";
 dotenv.config();
 const createAccessToken = (user) => {
   const token = jwt.sign(
@@ -55,4 +56,25 @@ const generateCode = () => {
   return code.join("");
 };
 
-export { createAccessToken, createRefreshToken, uploadImage, generateCode };
+const sentEmail = async (email, subject, emailContent) => {
+  try {
+    const smtpResponse = await transporter.sendMail({
+      from: `"ChatBox Team 👻" <${process.env.MY_EMAIL_ADDRESS}>`,
+      to: `${email}`,
+      subject: `${subject}`,
+      html: `${emailContent}`,
+    });
+
+    return smtpResponse;
+  } catch (error) {
+    return error;
+  }
+};
+
+export {
+  createAccessToken,
+  createRefreshToken,
+  uploadImage,
+  generateCode,
+  sentEmail,
+};
