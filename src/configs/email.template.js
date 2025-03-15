@@ -31,6 +31,20 @@ const emailTemplates = {
 <p>The <strong>ChatBox</strong> Team</p>
 `;
   },
+  otpRequestEmail: (username, code) => {
+    return `<h3>Dear ${username},</h3>
+<p>We noticed you requested a new verification code to complete your registration at <strong>ChatBox</strong>. Below is your new verification code:</p>
+
+<p><strong>Verification Code: ${code}</strong></p>
+
+<p>Please note that this code will expire in <strong>1 minute</strong>. If you did not request this code, you can ignore this email.</p>
+
+<p>If you need any assistance, feel free to reach out to us at <strong>mohammadshahzaib046@gmail.com</strong>.</p>
+
+<br>
+<p>Best regards,</p>
+<p>The <strong>ChatBox</strong> Team</p>`;
+  },
 };
 
 export { emailTemplates };

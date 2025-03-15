@@ -18,7 +18,6 @@ const verfiySchema = new mongoose.Schema(
 verfiySchema.post("save", function (doc, next) {
   setTimeout(async () => {
     await doc.deleteOne();
-    console.log("Verification code deleted after 60s");
   }, 60000);
   next();
 });

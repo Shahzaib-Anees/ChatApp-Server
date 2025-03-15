@@ -203,6 +203,35 @@ const refreshAccessToken = async (req, res) => {
   });
 };
 
+const sentVerificationCode = async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ message: "Email is required" });
+  const user = await schemaForUser.findOne({ email: email });
+  if (!user) return res.status(404).json({ message: "User not found" });
+  const verificationCode = generateCode();
+  const emailContent = emailTemplates.otpRequestEmail(
+    user.username,
+    verificationCode
+  );
+  const existinfVerificationCode = await schemaForVerify.findOne({
+    userId: user._id,
+  });
+  if (existinfVerificationCode) {
+    return res.status(400).json({
+      message: "Verification code already sent",
+    });
+  }
+  await sentEmail(user.email, "Verify Your Email for ChatBox", emailContent);
+  await schemaForVerify.create({
+    userId: user._id,
+    verificationCode,
+  });
+  return res.status(200).json({
+    message: "Verification code sent",
+    data: user,
+  });
+};
+
 // Verify Code
 const verifyCode = async (req, res) => {
   const { email, code, type } = req.body;
@@ -278,4 +307,5 @@ export {
   refreshAccessToken,
   verifyCode,
   resetPassword,
+  sentVerificationCode,
 };
