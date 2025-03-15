@@ -19,7 +19,7 @@ router.post("/login", logInUser);
 router.post("/refresh-token", refreshAccessToken);
 router.post("/find", findUserAccount);
 router.post("/verifyCode", verifyCode);
-router.post("requestCode", sentVerificationCode);
+router.post("/requestCode", sentVerificationCode);
 router.post("/resetPassword", authenticate, resetPassword);
 
 export default router;

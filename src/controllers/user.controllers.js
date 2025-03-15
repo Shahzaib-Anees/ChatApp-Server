@@ -228,7 +228,6 @@ const sentVerificationCode = async (req, res) => {
   });
   return res.status(200).json({
     message: "Verification code sent",
-    data: user,
   });
 };
 
