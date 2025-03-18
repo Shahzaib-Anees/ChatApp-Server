@@ -13,7 +13,7 @@ const createAccessToken = (user) => {
   );
 
   return token;
-};
+};  
 
 const createRefreshToken = (user) => {
   const token = jwt.sign(
