@@ -1,6 +1,7 @@
 import express from "express";
 import {
   findUserAccount,
+  getUserDetails,
   getUsers,
   logInUser,
   refreshAccessToken,
@@ -21,5 +22,6 @@ router.post("/find", findUserAccount);
 router.post("/verifyCode", verifyCode);
 router.post("/requestCode", sentVerificationCode);
 router.post("/resetPassword", authenticate, resetPassword);
+router.get("/userDetails", authenticate, getUserDetails);
 
 export default router;

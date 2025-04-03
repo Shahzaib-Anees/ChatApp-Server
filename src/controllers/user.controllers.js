@@ -82,7 +82,6 @@ const registerUser = async (req, res) => {
 
   return res.status(201).json({
     message: "Please check your email for verification",
-    user: newUser,
   });
 };
 
@@ -130,11 +129,10 @@ const logInUser = async (req, res) => {
   });
   return res.status(200).json({
     message: "Please verify yourself to complete login",
-    data: user,
   });
 };
 
-// find Account by email
+// find Account by email if forgot  password
 const findUserAccount = async (req, res) => {
   const { email } = req.body;
   if (!email)
@@ -298,6 +296,17 @@ const resetPassword = async (req, res) => {
   });
 };
 
+const getUserDetails = async (req, res) => {
+  const user = req.user;
+  const email = user?.email;
+  const userDetails = await schemaForUser.findOne({ email: email });
+  if (!userDetails) return res.status(404).json({ message: "User not found" });
+  return res.status(200).json({
+    message: "User details",
+    data: userDetails,
+  });
+};
+
 export {
   getUsers,
   registerUser,
@@ -307,4 +316,5 @@ export {
   verifyCode,
   resetPassword,
   sentVerificationCode,
+  getUserDetails,
 };
