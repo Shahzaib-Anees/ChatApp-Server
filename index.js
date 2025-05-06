@@ -12,9 +12,22 @@ const port = process.env.PORT || 3000;
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST"],
   },
+});
+
+io.on("connection", (socket) => {
+  console.log("user connected: ", socket.id);
+
+  socket.on("message", (message) => {
+    console.log("user message on server", message);
+    io.emit("message", message);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected: ", socket.id);
+  });
 });
 
 app.use("/api/user", userRoutes);
@@ -22,13 +35,14 @@ app.get("/", async (req, res) => {
   res.send("Hello ChatBox");
 });
 
+server.listen(port, () => {
+  console.log("Server is running on port 3000");
+});
+
 (async () => {
   try {
     const res = await connectDB();
     console.log(res);
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
   } catch (err) {
     console.log(err);
   }

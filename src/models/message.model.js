@@ -6,13 +6,21 @@ const messageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    receiver: {
-      type: String,
-      required: true,
-    },
     message: {
       type: String,
       required: true,
+    },
+    chat_room_id: [ 
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Chat",
+        required: true,
+      },
+    ],
+    messageType: {
+      type: String,
+      enum: ["text", "image", "file", "video", "audio"],
+      default: "text",
     },
     status: {
       type: String,

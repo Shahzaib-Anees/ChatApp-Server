@@ -307,6 +307,9 @@ const getUserDetails = async (req, res) => {
   });
 };
 
+
+// Update User data
+
 export {
   getUsers,
   registerUser,

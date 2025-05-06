@@ -2,14 +2,12 @@ import mongoose from "mongoose";
 
 const chatModel = new mongoose.Schema(
   {
-    member1: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-    member2: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
+    memebers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     message: {
       type: String,
       required: true,
