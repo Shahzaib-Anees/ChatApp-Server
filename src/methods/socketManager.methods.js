@@ -1,20 +1,28 @@
 import { socketAuthHandler } from "../middlewares/socket.middleware.js";
 import { schemaForUser } from "../models/user.model.js";
 
-const initializeSocker = (io) => {
+const initializeSockets = (io) => {
   io.use(socketAuthHandler);
+  io.on("connection", handleConnection);
 };
 
 const handleConnection = async (socket) => {
-  const userId = socket.userId;
-  console.log(`User connected: ${userId}`);
-  await updateUserStatus(userId, true);
-  await joinUserRooms(socket, userId);
+  try {
+    const userId = socket.userId;
+    console.log(`User connected: ${userId}`);
+    await updateUserStatus(userId, true);
+    await joinUserRooms(socket, userId);
+    setupMessageHandlers(socket, io);
+    setupStatusHandlers(socket, io);
 
-  socket.on("disconnect", async () => {
-    await updateUserStatus(userId, false);
-    console.log(`User disconnected: ${userId}`);
-  });
+    // Handle disconnection
+    socket.on("disconnect", async () => {
+      await updateUserStatus(userId, false);
+      console.log(`User disconnected: ${userId}`);
+    });
+  } catch (error) {
+    console.error("Socket connection error:", error);
+  }
 };
 
 const updateUserStatus = async (userId, status) => {
@@ -40,3 +48,5 @@ const joinUserRooms = async (socket, userId) => {
     }
   }
 };
+
+export { initializeSockets, handleConnection };

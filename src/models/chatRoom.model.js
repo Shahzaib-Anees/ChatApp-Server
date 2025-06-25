@@ -25,6 +25,11 @@ const chatModel = new mongoose.Schema(
       enum: ["single", "group"],
       default: "single",
     },
+    permissions: {
+      onlyAdminsCanSend: { type: Boolean, default: false },
+      onlyAdminsCanAddMembers: { type: Boolean, default: false },
+      allowMemberLeave: { type: Boolean, default: true },
+    },
   },
   {
     timestamps: true,
