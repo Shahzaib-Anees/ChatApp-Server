@@ -197,7 +197,9 @@ const refreshAccessToken = async (req, res) => {
   const accessToken = createAccessToken(user);
   return res.status(200).json({
     message: "Access token refreshed",
-    accessToken,
+    data: {
+      accessToken: accessToken,
+    },
   });
 };
 
@@ -257,13 +259,19 @@ const verifyCode = async (req, res) => {
     );
     return res.status(200).json({
       message: "Your Account has been verified",
-      accessToken,
-      refreshToken,
+      data: {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      },
     });
   } else {
-    return res
-      .status(200)
-      .json({ message: "Code verified", accessToken, refreshToken });
+    return res.status(200).json({
+      message: "Code verified",
+      data: {
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      },
+    });
   }
 };
 
@@ -299,14 +307,16 @@ const resetPassword = async (req, res) => {
 const getUserDetails = async (req, res) => {
   const user = req.user;
   const email = user?.email;
-  const userDetails = await schemaForUser.findOne({ email: email });
+  const userDetails = await schemaForUser
+    .findOne({ email: email })
+    .select("-password");
+
   if (!userDetails) return res.status(404).json({ message: "User not found" });
   return res.status(200).json({
     message: "User details",
     data: userDetails,
   });
 };
-
 
 // Update User data
 
