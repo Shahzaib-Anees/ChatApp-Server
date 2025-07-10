@@ -1,17 +1,19 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
 const chatModel = new mongoose.Schema(
   {
-    memebers: [
+    members: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
-    message: {
-      type: String,
-      required: true,
-    },
+    messages: [
+      {
+        type: Mongoose.Schema.Types.ObjectId,
+        ref: "Message",
+      },
+    ],
     locked: {
       type: Boolean,
       default: false,
