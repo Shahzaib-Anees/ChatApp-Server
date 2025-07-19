@@ -4,6 +4,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { connectDB } from "./src/db/index.js";
 import userRoutes from "./src/routes/user.routes.js";
+import { initializeSockets } from "./src/methods/socketManager.methods.js";
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -17,18 +18,19 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
-  console.log("user connected: ", socket.id);
+// io.on("connection", (socket) => {
+//   console.log("user connected: ", socket.id);
 
-  socket.on("message", (message) => {
-    console.log("user message on server", message);
-    io.emit("message", message);
-  });
+//   socket.on("message", (message) => {
+//     console.log("user message on server", message);
+//     io.emit("message", message);
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected: ", socket.id);
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("user disconnected: ", socket.id);
+//   });
+// });
+initializeSockets(io);
 
 app.use("/api/user", userRoutes);
 app.get("/", async (req, res) => {
