@@ -2,15 +2,32 @@ import mongoose from "mongoose";
 
 const chatModel = new mongoose.Schema(
   {
-    memebers: [
+    members: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
     ],
-    message: {
+    messages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message",
+      },
+    ],
+    lastMessage: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
+    name: {
       type: String,
-      required: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    avatar: {
+      type: String,
     },
     locked: {
       type: Boolean,
@@ -29,6 +46,10 @@ const chatModel = new mongoose.Schema(
       onlyAdminsCanSend: { type: Boolean, default: false },
       onlyAdminsCanAddMembers: { type: Boolean, default: false },
       allowMemberLeave: { type: Boolean, default: true },
+    },
+    isFavourite: {
+      type: Boolean,
+      default: false,
     },
   },
   {
