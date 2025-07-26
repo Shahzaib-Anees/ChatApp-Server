@@ -46,6 +46,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    secretLockCode: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,
