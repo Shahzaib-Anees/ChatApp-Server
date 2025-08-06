@@ -4,6 +4,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { connectDB } from "./src/db/index.js";
 import userRoutes from "./src/routes/user.routes.js";
+import lockChatRoutes from "./src/routes/lockChat.routes.js";
 import { initializeSockets } from "./src/methods/socketManager.methods.js";
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ const io = new Server(server, {
 initializeSockets(io);
 
 app.use("/api/user", userRoutes);
+app.use("/api/chat", lockChatRoutes);
 app.get("/", async (req, res) => {
   res.send("Hello ChatBox");
 });

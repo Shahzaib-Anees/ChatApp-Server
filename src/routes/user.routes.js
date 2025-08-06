@@ -8,9 +8,7 @@ import {
   registerUser,
   resetPassword,
   sentVerificationCode,
-  setSecretCodeForLockedChats,
   verifyCode,
-  verifySecretCodeForLockedChats,
 } from "../controllers/user.controllers.js";
 import { authenticate } from "../middlewares/authentication.middleware.js";
 
@@ -25,6 +23,5 @@ router.post("/verifyCode", verifyCode);
 router.post("/requestCode", sentVerificationCode);
 router.post("/resetPassword", authenticate, resetPassword);
 router.get("/userDetails", authenticate, getUserDetails);
-router.post("/setSecretCode", authenticate, setSecretCodeForLockedChats);
-router.post("/verifySecretCode", authenticate, verifySecretCodeForLockedChats);
+
 export default router;
