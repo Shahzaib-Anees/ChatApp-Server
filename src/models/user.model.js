@@ -50,6 +50,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    pinnedChats: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ChatRoom",
+        },
+      ],
+      validate: {
+        validator: function (v) {
+          return val.length <= 3;
+        },
+        message: "You can pin up to 3 chats only",
+      },
+    },
   },
   {
     timestamps: true,
