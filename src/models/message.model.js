@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
@@ -218,6 +218,15 @@ const messageSchema = new mongoose.Schema(
           enum: ["delete_for_me", "hide_message", "archive"],
           default: "delete_for_me",
         },
+      },
+    ],
+    receipts: [
+      {
+        userId: Mongoose.Schema.Types.ObjectId,
+        deliveredAt: Date,
+        readAt: Date,
+        ticketId: String,
+        status: String,
       },
     ],
   },

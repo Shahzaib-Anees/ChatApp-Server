@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDsIimvxR6u89Gq8itHMICtBHOtGb4EJQU",
-  authDomain: "chatapp-a8fdf.firebaseapp.com",
-  projectId: "chatapp-a8fdf",
-  storageBucket: "chatapp-a8fdf.firebasestorage.app",
-  messagingSenderId: "947485171349",
-  appId: "1:947485171349:web:5a2516241936c88658859c",
-  measurementId: "G-JQT6ZP2J4L",
+  apiKey: "AIzaSyBlSHIONgFGU5dFYFUnRmVBSzF-1biYhfc",
+  authDomain: "shazzy-s-project.firebaseapp.com",
+  projectId: "shazzy-s-project",
+  storageBucket: "shazzy-s-project.firebasestorage.app",
+  messagingSenderId: "772033817507",
+  appId: "1:772033817507:web:45ff1506636f8507d24816",
+  measurementId: "G-L1MXPSQ69L"
 };
 
 // Initialize Firebase

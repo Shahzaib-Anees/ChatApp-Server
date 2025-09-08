@@ -1,5 +1,6 @@
 import { socketAuthHandler } from "../middlewares/socket.middleware.js";
 import { schemaForUser } from "../models/user.model.js";
+import { markOnline } from "./userStatusCatcher.methods.js";
 
 const initializeSockets = (io) => {
   io.use(socketAuthHandler);
@@ -12,6 +13,8 @@ const handleConnection = async (socket) => {
     console.log(`User connected: ${userId}`);
     await updateUserStatus(userId, true);
     await joinUserRooms(socket, userId);
+    markOnline(userId);
+    // markOnline(userId);
     // setupMessageHandlers(socket, io);
     // setupStatusHandlers(socket, io);
 
