@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { type } from "os";
 
 const userSchema = new mongoose.Schema(
   {
@@ -49,6 +50,24 @@ const userSchema = new mongoose.Schema(
     activeStatus: {
       type: Boolean,
       default: false,
+    },
+    secretLockCode: {
+      type: String,
+      default: "",
+    },
+    pinnedChats: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ChatRoom",
+        },
+      ],
+      validate: {
+        validator: function (v) {
+          return val.length <= 3;
+        },
+        message: "You can pin up to 3 chats only",
+      },
     },
   },
   {
