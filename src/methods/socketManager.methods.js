@@ -12,8 +12,8 @@ const handleConnection = async (socket) => {
     console.log(`User connected: ${userId}`);
     await updateUserStatus(userId, true);
     await joinUserRooms(socket, userId);
-    setupMessageHandlers(socket, io);
-    setupStatusHandlers(socket, io);
+    // setupMessageHandlers(socket, io);
+    // setupStatusHandlers(socket, io);
 
     // Handle disconnection
     socket.on("disconnect", async () => {

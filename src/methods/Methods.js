@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 import { transporter } from "../configs/nodemailer.config.js";
+import { cloudinary } from "../configs/cloudinary.config.js";
 dotenv.config();
 const createAccessToken = (user) => {
   const token = jwt.sign(
@@ -13,7 +13,7 @@ const createAccessToken = (user) => {
   );
 
   return token;
-};  
+};
 
 const createRefreshToken = (user) => {
   const token = jwt.sign(
@@ -24,26 +24,6 @@ const createRefreshToken = (user) => {
     }
   );
   return token;
-};
-
-// Upload Image
-// Cloudinary Configs
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-const uploadImage = async (file) => {
-  try {
-    const result = await cloudinary.uploader.upload(file, {
-      resource_type: "auto",
-    });
-    return result?.url;
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
 };
 
 const generateCode = () => {
@@ -71,10 +51,27 @@ const sentEmail = async (email, subject, emailContent) => {
   }
 };
 
+const uploadImageToCloudinary = async (localFile) => {
+  try {
+    const response = await cloudinary.uploader.upload(localFile, {
+      resource_type: "auto",
+    });
+
+    fs.unlink(localFile, (err) => {
+      if (err) console.log("Error deleting local file:", err);
+    });
+
+    return response.url;
+  } catch (error) {
+    console.log(error);
+    return "Error in uploading file to cloudinary", error;
+  }
+};
+
 export {
   createAccessToken,
   createRefreshToken,
-  uploadImage,
   generateCode,
   sentEmail,
+  uploadImageToCloudinary,
 };
